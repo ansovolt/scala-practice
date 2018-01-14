@@ -1,4 +1,4 @@
-package com.ansosoft.test.number2
+package com.ansosoft.practice1.number2
 
 import scala.io.Source
 
@@ -28,7 +28,7 @@ class BlobBuilder {
 
   def build() ={
 
-    for (l <- Source.fromFile("C:\\Users\\asochal\\projects\\git\\playground\\scala\\src\\com\\ansosoft\\test\\number2\\input.dat").getLines()){
+    for (l <- Source.fromFile("C:\\Users\\beti\\ansosoft\\projects\\scala-practice\\src\\com\\ansosoft\\practice1\\number2\\input.dat").getLines()){
       if (totalRec == -1 ){
         totalRec = l.toInt
       }
