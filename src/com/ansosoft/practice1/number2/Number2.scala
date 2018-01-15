@@ -1,5 +1,6 @@
 package com.ansosoft.practice1.number2
 
+import scala.collection.mutable
 import scala.io.Source
 
 /**
@@ -11,9 +12,12 @@ object Number2 extends App{
   val bb = new BlobBuilder()
   bb.build()
   val blobs = bb.blobs
-  for (b <- blobs){
-    b.printBlob()
-    println()
+  for (b <- blobs.reverse){
+    //b.printBlob()
+    //println(b.findNeighbours(1,2))
+    //println(b.findBlobSize(0,6))
+    print(b.runTests())
+    //println()
   }
 
 }
@@ -119,20 +123,82 @@ class Blob {
   }
 
   def findBlobSize(row:Int,col:Int) :String = {
+    var count:Int = 0
     var retVal = "NO BLOB"
+    var processed:List[(Int,Int)] = List()
+    var pending:mutable.Queue[(Int,Int)] = mutable.Queue()
 
+    if (isIn(row,col) && blob(row)(col) == 1){
+      pending.enqueue((row,col))
+      while (!pending.isEmpty) {
+        val working = pending.dequeue()
+        //println(s"working: $working")
+        processed = working :: processed
+        val n = findNeighbours(working._1,working._2)
+        val f = n.filter(( e:(Int,Int)) => {
+          if ( processed.contains(e) ) false else true
+        })
+        f.foreach( (e:(Int,Int)) => {
+          if (!pending.contains(e)) pending.enqueue(e)
+          count = count + 1
+        } )
+      }
+    }
 
+    if (!processed.isEmpty){
+      retVal = processed.size.toString
+    }
 
-    return retVal
+    return retVal;
   }
 
 
   def findNeighbours(row:Int, col:Int):List[(Int,Int)] = {
-    var neighbours = List()
+    var neighbours = List[(Int,Int)]()
 
-
-
+    if (isIn(row,col-1) && blob(row)(col-1) == 1){
+      neighbours = (row,col-1) :: neighbours
+    }
+    if (isIn(row-1,col-1) && blob(row-1)(col-1) == 1){
+      neighbours = (row-1,col-1) :: neighbours
+    }
+    if (isIn(row-1,col) && blob(row-1)(col) == 1){
+      neighbours = (row-1,col) :: neighbours
+    }
+    if (isIn(row-1,col+1) && blob(row-1)(col+1) == 1){
+      neighbours = (row-1,col+1) :: neighbours
+    }
+    if (isIn(row,col+1) && blob(row)(col+1) == 1){
+      neighbours = (row,col+1) :: neighbours
+    }
+    if (isIn(row+1,col+1) && blob(row+1)(col+1) == 1){
+      neighbours = (row+1,col+1) :: neighbours
+    }
+    if (isIn(row+1,col) && blob(row+1)(col) == 1){
+      neighbours = (row+1,col) :: neighbours
+    }
+    if (isIn(row+1,col-1) && blob(row+1)(col-1) == 1){
+      neighbours = (row+1,col-1) :: neighbours
+    }
     return neighbours
+  }
+
+  def isIn(row:Int,col:Int):Boolean = {
+    var isIn = false;
+    if (row >= 0 && col >= 0 && row < blob.length && col < blob(0).length ){
+      isIn = true
+    }
+    return isIn
+  }
+
+  def runTests():String = {
+    var results:String = ""
+    for (tc <- testCases.reverse){
+      results = results + findBlobSize(tc._1 -1 ,tc._2 - 1)
+      results = results + "\n"
+    }
+
+    return results
   }
 
 }
